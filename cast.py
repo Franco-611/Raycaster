@@ -10,7 +10,7 @@ GREEN = (0, 255, 0)
 BLUE = (0, 0, 255)
 RED = (255, 0, 0)
 BLACK = (0, 0, 0)
-
+TRANSPARENTE = (152, 0, 136)
 SKY = (0, 100, 200)
 GROUND = (200, 200, 100)
 
@@ -31,6 +31,24 @@ walls = {
     "5": pygame.image.load('./wall5.png')
 }
 
+
+enemis = [
+    {
+        "x" : 120,
+        "y" : 120,
+        "1":  pygame.image.load('./enemi.png')
+    }, 
+    {
+        "x" : 300,
+        "y" : 300,
+        "1":  pygame.image.load('./enemi.png')
+    }
+
+]
+
+
+
+
 class Raycaster(object):
     def __init__ (self, screen):
         self.screen = screen
@@ -43,6 +61,11 @@ class Raycaster(object):
             'fov': int(pi/3),
             'a': int(pi/3)
         }
+        self.scale = 10
+        self.zbuffer = [99999 for z in range(0, int(self.width/2))]
+
+    def clearZ(self):
+        self.zbuffer = [99999 for z in range(0, self.width)]
 
     def point(self, x, y, c = WHITE):
         self.screen.set_at((x, y), c)
@@ -92,11 +115,55 @@ class Raycaster(object):
         for i in range(0, int(self.width/2)):
             a = self.player["a"] - self.player["fov"]/2 + self.player["fov"]*i/(self.width/2)
             d, c, tx = self.cast_ray(a)
-
             x = int(self.width/2) + i
-            h = self.height/(d * cos(a - self.player['a'])) * self.height/10
+            h = self.height/(d * cos(a - self.player['a'])) * self.height/self.scale
 
-            self.draw_stake(x, h, c, tx)
+            if self.zbuffer[i] >= d:
+                self.draw_stake(x, h, c, tx)
+                self.zbuffer[i] = d
+
+        for enemy in enemis:
+            self.point(enemy["x"], enemy["y"], (255, 0, 0))
+
+        for enemy in enemis:
+            self.draw_sprite(enemy)
+
+    def draw_sprite(self, sprite):
+        sprite_a = atan2(
+            sprite["y"] - self.player["y"], 
+            sprite["x"] - self.player["x"]
+        )
+
+        d = (
+            (self.player["x"] - sprite["x"])**2 + 
+            (self.player["y"] - sprite["y"])**2
+            )** 0.5
+
+        sprite_size = int(((self.width/2)/d) * self.height/self.scale)
+
+        sprite_x = int(
+            (self.width/2) + 
+            (sprite_a - self.player["a"]) * 
+            (self.width/2) / self.player["fov"] 
+            + sprite_size/2)
+
+        sprite_y = int(self.height/2 - sprite_size/2)
+        
+        for x in range(sprite_x, sprite_x + sprite_size):
+            for y in range(sprite_y, sprite_y + sprite_size):
+                tx = int((x - sprite_x) * 128 / sprite_size)
+                ty = int((y - sprite_y) * 128 / sprite_size)
+                
+                c = sprite["1"].get_at((tx, ty))
+
+                if c != TRANSPARENTE:
+                    if(sprite_x > int(self.width/2)):
+                        if self.zbuffer[x  - int(self.width/2)] >= d:
+                            self.point(x, y, c)
+                            self.zbuffer[x - int(self.width/2)] = d
+
+
+
 
     def cast_ray(self, a):
         d = 0
@@ -147,6 +214,7 @@ r.load_map("./map.txt")
 
 running = True
 while running:
+    r.clearZ()
     screen.fill(BLACK, (0, 0, r.width, r.height))
     screen.fill(SKY, (r.width/2, 0, r.width, r.height/2))
     screen.fill(GROUND, (r.width/2, r.height/2, r.width, r.height/2))
