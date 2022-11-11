@@ -22,7 +22,6 @@ colors = [
   (255, 255, 255)
 ]
 
-
 walls = {
     "1": pygame.image.load('./wall1.png'),
     "2": pygame.image.load('./wall2.png'),
@@ -30,7 +29,6 @@ walls = {
     "4": pygame.image.load('./wall4.png'),
     "5": pygame.image.load('./wall5.png')
 }
-
 
 enemis = [
     {
@@ -45,8 +43,6 @@ enemis = [
     }
 
 ]
-
-
 
 
 class Raycaster(object):
@@ -157,13 +153,10 @@ class Raycaster(object):
                 c = sprite["1"].get_at((tx, ty))
 
                 if c != TRANSPARENTE:
-                    if(sprite_x > int(self.width/2)):
+                    if(x > int(self.width/2) and x < int(self.width)):
                         if self.zbuffer[x  - int(self.width/2)] >= d:
                             self.point(x, y, c)
                             self.zbuffer[x - int(self.width/2)] = d
-
-
-
 
     def cast_ray(self, a):
         d = 0
