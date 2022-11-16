@@ -10,9 +10,9 @@ GREEN = (0, 255, 0)
 BLUE = (0, 0, 255)
 RED = (255, 0, 0)
 BLACK = (0, 0, 0)
-TRANSPARENTE = (152, 0, 136)
-SKY = (0, 100, 200)
-GROUND = (200, 200, 100)
+TRANSPARENTE = (255, 255, 255)
+SKY = (97, 85, 127)
+GROUND = (185, 204, 214)
 
 colors = [
   (4, 40, 63),
@@ -23,27 +23,32 @@ colors = [
 ]
 
 walls = {
-    "1": pygame.image.load('./wall1.png'),
-    "2": pygame.image.load('./wall2.png'),
-    "3": pygame.image.load('./wall3.png'),
-    "4": pygame.image.load('./wall4.png'),
-    "5": pygame.image.load('./wall5.png')
+    "1": pygame.image.load('./pared.png')
 }
 
 enemis = [
     {
         "x" : 120,
         "y" : 120,
-        "1":  pygame.image.load('./enemi.png')
+        "1":  pygame.image.load('./cora.png')
     }, 
     {
         "x" : 300,
         "y" : 300,
-        "1":  pygame.image.load('./enemi.png')
+        "1":  pygame.image.load('./cora.png')
+    }, 
+    {
+        "x" : 300,
+        "y" : 300,
+        "1":  pygame.image.load('./cora.png')
+    }, 
+    {
+        "x" : 300,
+        "y" : 300,
+        "1":  pygame.image.load('./cora.png')
     }
 
 ]
-
 
 class Raycaster(object):
     def __init__ (self, screen):
@@ -55,10 +60,11 @@ class Raycaster(object):
             'x': int(self.blocksize + self.blocksize / 2),
             'y': int(self.blocksize + self.blocksize / 2),
             'fov': int(pi/3),
-            'a': int(pi/3)
+            'a': int(0), 
+            'vidas': 0
         }
         self.scale = 10
-        self.zbuffer = [99999 for z in range(0, int(self.width/2))]
+        self.zbuffer = [99999 for z in range(0, int(self.width))]
 
     def clearZ(self):
         self.zbuffer = [99999 for z in range(0, self.width)]
@@ -91,10 +97,12 @@ class Raycaster(object):
         self.point(self.player["x"], self.player["y"])
 
     def render(self):
-        self.draw_map()
-        self.draw_player()
+        #self.draw_map()
+        #self.draw_player()
         
         density = 100
+
+        '''
         #mini mapa
         for i in range(0, density):
             a = self.player["a"] - self.player["fov"]/2 + self.player["fov"]*i/density
@@ -106,20 +114,27 @@ class Raycaster(object):
             self.point(500, i)
             self.point(501, i)
 
+        '''
+
 
         #3d
-        for i in range(0, int(self.width/2)):
-            a = self.player["a"] - self.player["fov"]/2 + self.player["fov"]*i/(self.width/2)
+        for i in range(0, int(self.width)):
+            a = self.player["a"] - self.player["fov"]/2 + self.player["fov"]*i/(self.width)
             d, c, tx = self.cast_ray(a)
-            x = int(self.width/2) + i
-            h = self.height/(d * cos(a - self.player['a'])) * self.height/self.scale
+            x = i
+            try:
+                h = self.height/(d * cos(a - self.player['a'])) * self.height/self.scale
+            except:
+                h = 0
 
             if self.zbuffer[i] >= d:
                 self.draw_stake(x, h, c, tx)
                 self.zbuffer[i] = d
 
+        '''
         for enemy in enemis:
             self.point(enemy["x"], enemy["y"], (255, 0, 0))
+        '''
 
         for enemy in enemis:
             self.draw_sprite(enemy)
@@ -135,13 +150,13 @@ class Raycaster(object):
             (self.player["y"] - sprite["y"])**2
             )** 0.5
 
-        sprite_size = int(((self.width/2)/d) * self.height/self.scale)
+        sprite_size = int(((self.width)/d) * self.height/self.scale/6)
 
         sprite_x = int(
-            (self.width/2) + 
+            
             (sprite_a - self.player["a"]) * 
-            (self.width/2) / self.player["fov"] 
-            + sprite_size/2)
+            (self.width) / self.player["fov"] 
+            + sprite_size)
 
         sprite_y = int(self.height/2 - sprite_size/2)
         
@@ -153,10 +168,10 @@ class Raycaster(object):
                 c = sprite["1"].get_at((tx, ty))
 
                 if c != TRANSPARENTE:
-                    if(x > int(self.width/2) and x < int(self.width)):
-                        if self.zbuffer[x  - int(self.width/2)] >= d:
+                    if(x > 0 and x < int(self.width)):
+                        if self.zbuffer[x] >= d:
                             self.point(x, y, c)
-                            self.zbuffer[x - int(self.width/2)] = d
+                            self.zbuffer[x] = d
 
     def cast_ray(self, a):
         d = 0
@@ -184,7 +199,7 @@ class Raycaster(object):
                 return d, self.map[j][i], tx
 
 
-            self.point(x, y)
+            #self.point(x, y)
             d += 1
 
     def draw_stake(self, x, h, c, tx):
@@ -200,17 +215,38 @@ class Raycaster(object):
 
 
 pygame.init()
-screen = pygame.display.set_mode((1000, 500))
+screen = pygame.display.set_mode((600, 600))
 r = Raycaster(screen)
 r.load_map("./map.txt")
 
+ini = pygame.image.load('./inicio.png')
+fini = pygame.image.load('./fin.png')
+
+inicio = True
+while inicio:
+    
+    for x in range(0, 600):
+        for y in range(0, 600):
+            color = ini.get_at((x, y))
+            r.point(x, y, color)
+
+            
+    pygame.display.flip()
+    for event in pygame.event.get():
+
+        if event.type == pygame.QUIT:
+            inicio = False
+
+        if (event.type == pygame.KEYDOWN):
+            if event.key == pygame.K_KP_ENTER:
+                inicio = False
 
 running = True
 while running:
     r.clearZ()
-    screen.fill(BLACK, (0, 0, r.width, r.height))
-    screen.fill(SKY, (r.width/2, 0, r.width, r.height/2))
-    screen.fill(GROUND, (r.width/2, r.height/2, r.width, r.height/2))
+    screen.fill(BLACK)
+    screen.fill(SKY, (0, 0, r.width, r.height/2))
+    screen.fill(GROUND, (0, r.height/2, r.width, r.height/2))
     r.render()
 
     pygame.display.flip()
@@ -221,17 +257,116 @@ while running:
 
         if (event.type == pygame.KEYDOWN):
             if event.key == pygame.K_a:
-                r.player["a"] -= pi/10
+                r.player["a"] = (r.player["a"] - pi / 4)% (2 * pi)
             if event.key == pygame.K_d:
-                r.player["a"] += pi/10
+                r.player["a"] = (r.player["a"] + pi / 4)% (2 * pi)
+
+
+            if event.key == pygame.K_RIGHT:
+                if r.player["a"] == 0:
+                    r.player["y"] += 10
+                if abs(r.player["a"]) == pi/4:
+                    r.player["x"] -= 10
+                    r.player["y"] += 10
+                if abs(r.player["a"]) == pi/2:
+                    r.player["x"] -= 10
+                if abs(r.player["a"]) == 3*pi/4:
+                    r.player["x"] -= 10
+                    r.player["y"] -= 10
+                if abs(r.player["a"]) == pi:
+                    r.player["y"] -= 10
+                if abs(r.player["a"]) == 5*pi/4:
+                    r.player["x"] += 10
+                    r.player["y"] -= 10
+                if abs(r.player["a"]) == 3*pi/2:
+                    r.player["x"] += 10
+                if abs(r.player["a"]) == 7*pi/4:
+                    r.player["x"] += 10
+                    r.player["y"] += 10
+            if event.key == pygame.K_LEFT:
+                if r.player["a"] == 0:
+                    r.player["y"] -= 10
+                if abs(r.player["a"]) == pi/4:
+                    r.player["x"] += 10
+                    r.player["y"] -= 10
+                if abs(r.player["a"]) == pi/2:
+                    r.player["x"] += 10
+                if abs(r.player["a"]) == 3*pi/4:
+                    r.player["x"] += 10
+                    r.player["y"] += 10
+                if abs(r.player["a"]) == pi:
+                    r.player["y"] += 10
+                if abs(r.player["a"]) == 5*pi/4:
+                    r.player["x"] -= 10
+                    r.player["y"] += 10
+                if abs(r.player["a"]) == 3*pi/2:
+                    r.player["x"] -= 10
+                if abs(r.player["a"]) == 7*pi/4:
+                    r.player["x"] -= 10
+                    r.player["y"] -= 10
+            if event.key == pygame.K_UP:
+                if r.player["a"] == 0:
+                    r.player["x"] += 10
+                if abs(r.player["a"]) == pi/4:
+                    r.player["x"] += 10
+                    r.player["y"] += 10
+                if abs(r.player["a"]) == pi/2:
+                    r.player["y"] += 10
+                if abs(r.player["a"]) == 3*pi/4:
+                    r.player["x"] -= 10
+                    r.player["y"] += 10
+                if abs(r.player["a"]) == pi:
+                    r.player["x"] -= 10
+                if abs(r.player["a"]) == 5*pi/4:
+                    r.player["x"] -= 10
+                    r.player["y"] -= 10
+                if abs(r.player["a"]) == 3*pi/2:
+                    r.player["y"] -= 10
+                if abs(r.player["a"]) == 7*pi/4:
+                    r.player["x"] += 10
+                    r.player["y"] -= 10
+            if event.key == pygame.K_DOWN:
+                if r.player["a"] == 0:
+                    r.player["x"] -= 10
+                if abs(r.player["a"]) == pi/4:
+                    r.player["x"] -= 10
+                    r.player["y"] -= 10
+                if abs(r.player["a"]) == pi/2:
+                    r.player["y"] -= 10
+                if abs(r.player["a"]) == 3*pi/4:
+                    r.player["x"] += 10
+                    r.player["y"] -= 10
+                if abs(r.player["a"]) == pi:
+                    r.player["x"] += 10
+                if abs(r.player["a"]) == 5*pi/4:
+                    r.player["x"] += 10
+                    r.player["y"] += 10
+                if abs(r.player["a"]) == 3*pi/2:
+                    r.player["y"] += 10
+                if abs(r.player["a"]) == 7*pi/4:
+                    r.player["x"] -= 10
+                    r.player["y"] += 10
+            if event.key == pygame.K_KP_ENTER:
+                r.player["vidas"] += 1
+
+            if r.player["vidas"] == 4:
+                running = False
+
+fin = True
+while fin:
+    
+    for x in range(0, 600):
+        for y in range(0, 600):
+            color = fini.get_at((x, y))
+            r.point(x, y, color)
 
             
-            if event.key == pygame.K_RIGHT:
-                r.player["x"] += 10
-            if event.key == pygame.K_LEFT:
-                r.player["x"] -= 10
-            if event.key == pygame.K_UP:
-                r.player["y"] -= 10
-            if event.key == pygame.K_DOWN:
-                r.player["y"] += 10
+    pygame.display.flip()
+    for event in pygame.event.get():
 
+        if event.type == pygame.QUIT:
+            fin = False
+
+        if (event.type == pygame.KEYDOWN):
+            if event.key == pygame.K_KP_ENTER:
+                fin = False
