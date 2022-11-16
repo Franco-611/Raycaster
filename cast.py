@@ -39,12 +39,12 @@ enemis = [
     }, 
     {
         "x" : 300,
-        "y" : 300,
+        "y" : 110,
         "1":  pygame.image.load('./cora.png')
     }, 
     {
-        "x" : 300,
-        "y" : 300,
+        "x" : 90,
+        "y" : 200,
         "1":  pygame.image.load('./cora.png')
     }
 
@@ -124,12 +124,13 @@ class Raycaster(object):
             x = i
             try:
                 h = self.height/(d * cos(a - self.player['a'])) * self.height/self.scale
-            except:
-                h = 0
 
-            if self.zbuffer[i] >= d:
-                self.draw_stake(x, h, c, tx)
-                self.zbuffer[i] = d
+                if self.zbuffer[i] >= d:
+                    self.draw_stake(x, h, c, tx)
+                    self.zbuffer[i] = d
+            except:
+                self.regresar()
+
 
         '''
         for enemy in enemis:
@@ -212,7 +213,95 @@ class Raycaster(object):
             color = walls[c].get_at((tx, ty))
             self.point(x, y, color)
 
-
+    def regresar(self):
+        if abs(self.player["a"]) == 0:
+            if self.mov == "izq":
+                self.player["y"] += 10
+            if self.mov == "der":
+                self.player["y"] -= 10
+            if self.mov == "arr":
+                self.player["x"] -= 10
+            if self.mov == "abaj":
+                self.player["x"] += 10
+        if abs(self.player["a"]) == pi/4:
+            if self.mov == "izq":
+                self.player["x"] -= 10
+                self.player["y"] += 10
+            if self.mov == "der":
+                self.player["x"] += 10
+                self.player["y"] -=10
+            if self.mov == "arr":
+                self.player["x"] -= 10
+                self.player["y"] -= 10
+            if self.mov == "abaj":
+                self.player["x"] += 10
+                self.player["y"] += 10
+        if abs(self.player["a"]) == pi/2:
+            if self.mov == "izq":
+                self.player["x"] -= 10
+            if self.mov == "der":
+                self.player["x"] += 10
+            if self.mov == "arr":
+                self.player["y"] -= 10
+            if self.mov == "abaj":
+                self.player["y"] += 10
+        if abs(self.player["a"]) == 3*pi/4:
+            if self.mov == "izq":
+                self.player["x"] -= 10
+                self.player["y"] -= 10
+            if self.mov == "der":
+                self.player["x"] += 10
+                self.player["y"] += 10
+            if self.mov == "arr":
+                self.player["x"] += 10
+                self.player["y"] -= 10
+            if self.mov == "abaj":
+                self.player["x"] -= 10
+                self.player["y"] += 10
+        if abs(self.player["a"]) == pi:
+            if self.mov == "izq":
+                self.player["y"] -= 10
+            if self.mov == "der":
+                self.player["y"] += 10
+            if self.mov == "arr":
+                self.player["x"] += 10
+            if self.mov == "abaj":
+                self.player["x"] -= 10
+        if abs(self.player["a"]) == 5*pi/4:
+            if self.mov == "izq":
+                self.player["x"] += 10
+                self.player["y"] -= 10
+            if self.mov == "der":
+                self.player["x"] -= 10
+                self.player["y"] += 10
+            if self.mov == "arr":
+                self.player["x"] += 10
+                self.player["y"] += 10
+            if self.mov == "abaj":
+                self.player["x"] -= 10
+                self.player["y"] -= 10
+        if abs(self.player["a"]) == 3*pi/2:
+            if self.mov == "izq":
+                self.player["x"] += 10
+            if self.mov == "der":
+                self.player["x"] -= 10
+            if self.mov == "arr":
+                self.player["y"] += 10
+            if self.mov == "abaj":
+                self.player["y"] -= 10
+        if abs(self.player["a"]) == 7*pi/4:
+            if self.mov == "izq":
+                self.player["x"] += 10
+                self.player["y"] += 10
+            if self.mov == "der":
+                self.player["x"] -= 10
+                self.player["y"] -= 10
+            if self.mov == "arr":
+                self.player["x"] -= 10
+                self.player["y"] += 10
+            if self.mov == "abaj":
+                self.player["x"] += 10
+                self.player["y"] -= 10
 
 pygame.init()
 screen = pygame.display.set_mode((600, 600))
@@ -263,6 +352,7 @@ while running:
 
 
             if event.key == pygame.K_RIGHT:
+                r.mov = "der"
                 if r.player["a"] == 0:
                     r.player["y"] += 10
                 if abs(r.player["a"]) == pi/4:
@@ -284,6 +374,7 @@ while running:
                     r.player["x"] += 10
                     r.player["y"] += 10
             if event.key == pygame.K_LEFT:
+                r.mov = "izq"
                 if r.player["a"] == 0:
                     r.player["y"] -= 10
                 if abs(r.player["a"]) == pi/4:
@@ -305,6 +396,7 @@ while running:
                     r.player["x"] -= 10
                     r.player["y"] -= 10
             if event.key == pygame.K_UP:
+                r.mov = "arr"
                 if r.player["a"] == 0:
                     r.player["x"] += 10
                 if abs(r.player["a"]) == pi/4:
@@ -326,6 +418,7 @@ while running:
                     r.player["x"] += 10
                     r.player["y"] -= 10
             if event.key == pygame.K_DOWN:
+                r.mov = "abaj"
                 if r.player["a"] == 0:
                     r.player["x"] -= 10
                 if abs(r.player["a"]) == pi/4:
