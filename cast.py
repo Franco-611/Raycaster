@@ -217,89 +217,89 @@ class Raycaster(object):
         if abs(self.player["a"]) == 0:
             if self.mov == "izq":
                 self.player["y"] += 10
-            if self.mov == "der":
+            elif self.mov == "der":
                 self.player["y"] -= 10
-            if self.mov == "arr":
+            elif self.mov == "arr":
                 self.player["x"] -= 10
-            if self.mov == "abaj":
+            elif self.mov == "abaj":
                 self.player["x"] += 10
         if abs(self.player["a"]) == pi/4:
             if self.mov == "izq":
                 self.player["x"] -= 10
                 self.player["y"] += 10
-            if self.mov == "der":
+            elif self.mov == "der":
                 self.player["x"] += 10
                 self.player["y"] -=10
-            if self.mov == "arr":
+            elif self.mov == "arr":
                 self.player["x"] -= 10
                 self.player["y"] -= 10
-            if self.mov == "abaj":
+            elif self.mov == "abaj":
                 self.player["x"] += 10
                 self.player["y"] += 10
         if abs(self.player["a"]) == pi/2:
             if self.mov == "izq":
                 self.player["x"] -= 10
-            if self.mov == "der":
+            elif self.mov == "der":
                 self.player["x"] += 10
-            if self.mov == "arr":
+            elif self.mov == "arr":
                 self.player["y"] -= 10
-            if self.mov == "abaj":
+            elif self.mov == "abaj":
                 self.player["y"] += 10
         if abs(self.player["a"]) == 3*pi/4:
             if self.mov == "izq":
                 self.player["x"] -= 10
                 self.player["y"] -= 10
-            if self.mov == "der":
+            elif self.mov == "der":
                 self.player["x"] += 10
                 self.player["y"] += 10
-            if self.mov == "arr":
+            elif self.mov == "arr":
                 self.player["x"] += 10
                 self.player["y"] -= 10
-            if self.mov == "abaj":
+            elif self.mov == "abaj":
                 self.player["x"] -= 10
                 self.player["y"] += 10
         if abs(self.player["a"]) == pi:
             if self.mov == "izq":
                 self.player["y"] -= 10
-            if self.mov == "der":
+            elif self.mov == "der":
                 self.player["y"] += 10
-            if self.mov == "arr":
+            elif self.mov == "arr":
                 self.player["x"] += 10
-            if self.mov == "abaj":
+            elif self.mov == "abaj":
                 self.player["x"] -= 10
         if abs(self.player["a"]) == 5*pi/4:
             if self.mov == "izq":
                 self.player["x"] += 10
                 self.player["y"] -= 10
-            if self.mov == "der":
+            elif self.mov == "der":
                 self.player["x"] -= 10
                 self.player["y"] += 10
-            if self.mov == "arr":
+            elif self.mov == "arr":
                 self.player["x"] += 10
                 self.player["y"] += 10
-            if self.mov == "abaj":
+            elif self.mov == "abaj":
                 self.player["x"] -= 10
                 self.player["y"] -= 10
         if abs(self.player["a"]) == 3*pi/2:
             if self.mov == "izq":
                 self.player["x"] += 10
-            if self.mov == "der":
+            elif self.mov == "der":
                 self.player["x"] -= 10
-            if self.mov == "arr":
+            elif self.mov == "arr":
                 self.player["y"] += 10
-            if self.mov == "abaj":
+            elif self.mov == "abaj":
                 self.player["y"] -= 10
         if abs(self.player["a"]) == 7*pi/4:
             if self.mov == "izq":
                 self.player["x"] += 10
                 self.player["y"] += 10
-            if self.mov == "der":
+            elif self.mov == "der":
                 self.player["x"] -= 10
                 self.player["y"] -= 10
-            if self.mov == "arr":
+            elif self.mov == "arr":
                 self.player["x"] -= 10
                 self.player["y"] += 10
-            if self.mov == "abaj":
+            elif self.mov == "abaj":
                 self.player["x"] += 10
                 self.player["y"] -= 10
 
