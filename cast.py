@@ -13,6 +13,8 @@ BLACK = (0, 0, 0)
 TRANSPARENTE = (255, 255, 255)
 SKY = (97, 85, 127)
 GROUND = (185, 204, 214)
+SKY2 = (243, 114, 32)
+GROUND2 = (83, 153, 176)
 
 colors = [
   (4, 40, 63),
@@ -23,7 +25,8 @@ colors = [
 ]
 
 walls = {
-    "1": pygame.image.load('./pared.png')
+    "1": pygame.image.load('./pared.png'), 
+    "2": pygame.image.load('./muro.png')
 }
 
 enemis = [
@@ -306,10 +309,11 @@ class Raycaster(object):
 pygame.init()
 screen = pygame.display.set_mode((600, 600))
 r = Raycaster(screen)
-r.load_map("./map.txt")
+
 
 ini = pygame.image.load('./inicio.png')
 fini = pygame.image.load('./fin.png')
+
 
 inicio = True
 while inicio:
@@ -327,15 +331,33 @@ while inicio:
             inicio = False
 
         if (event.type == pygame.KEYDOWN):
+            if (event.key == pygame.K_1):
+                level = 1
+            if (event.key == pygame.K_2):
+                level = 2
             if event.key == pygame.K_KP_ENTER:
-                inicio = False
+                try: 
+                    level 
+                    inicio = False
+                except:
+                    pass
+
+if level == 1:
+    r.load_map("./map.txt")
+elif level == 2:
+    r.load_map("./map2.txt")
 
 running = True
 while running:
     r.clearZ()
     screen.fill(BLACK)
-    screen.fill(SKY, (0, 0, r.width, r.height/2))
-    screen.fill(GROUND, (0, r.height/2, r.width, r.height/2))
+    if level == 1:
+        screen.fill(SKY, (0, 0, r.width, r.height/2))
+        screen.fill(GROUND, (0, r.height/2, r.width, r.height/2))
+    else:
+        screen.fill(SKY2, (0, 0, r.width, r.height/2))
+        screen.fill(GROUND2, (0, r.height/2, r.width, r.height/2))
+
     r.render()
 
     pygame.display.flip()
