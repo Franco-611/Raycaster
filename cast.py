@@ -375,7 +375,7 @@ pygame.mixer.music.play(-1)
 
 
 
-ini = pygame.image.load('./inicio.png')
+ini = pygame.image.load('./Inicio.png')
 fini = pygame.image.load('./fin.png')
 
 
