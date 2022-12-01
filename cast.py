@@ -538,8 +538,9 @@ while running:
 
             if r.player["vidas"] == 4:
                 running = False
+                fin = True
 
-fin = True
+
 while fin:
     
     for x in range(0, 600):
